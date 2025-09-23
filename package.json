@@ -12,12 +12,14 @@
     "archiver": "^7.0.1",
     "chokidar": "^4.0.3",
     "express": "^5.1.0",
+    "lodash.debounce": "^4.0.8",
     "morgan": "^1.10.1",
     "typescript": "^5.9.2"
   },
   "devDependencies": {
     "@types/archiver": "^6.0.3",
     "@types/express": "^5.0.3",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.5.2",
     "@typescript-eslint/eslint-plugin": "^8.44.1",

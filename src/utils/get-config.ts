@@ -1,15 +1,17 @@
-import chokidar, {FSWatcher} from 'chokidar';
+import chokidar, { FSWatcher } from 'chokidar';
 import fs from 'fs';
 import { configPath } from '../constants/paths';
 
 export interface Config {
   foldersToArchive: string[];
   archivesFolder: string;
+  watcherThrottle: number;
 }
 
 const defaultConfig: Config = {
   foldersToArchive: [],
   archivesFolder: './cache',
+  watcherThrottle: 3000,
 };
 
 let config: Config;
@@ -27,15 +29,17 @@ function reloadConfig() {
   }
 }
 
-let watcher: FSWatcher;
+export let configWatcher: FSWatcher;
 
 export function setupConfig() {
-  watcher = chokidar.watch(configPath, {
+  configWatcher = chokidar.watch(configPath, {
     persistent: true,
     ignoreInitial: true,
   });
 
-  watcher.on('change', reloadConfig);
+  configWatcher.on('change', () => {
+    setTimeout(reloadConfig, 1000);
+  });
 
   reloadConfig();
 }

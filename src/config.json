@@ -1,7 +1,5 @@
 {
-  "foldersToArchive": [
-    "./mods1",
-    "./mods2"
-  ],
-  "archivesFolder": "./cache"
+  "foldersToArchive": ["./mods1", "./mods2"],
+  "archivesFolder": "./cache",
+  "watcherThrottle": 3000
 }
