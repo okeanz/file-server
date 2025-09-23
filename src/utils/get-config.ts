@@ -1,4 +1,4 @@
-import chokidar from 'chokidar';
+import chokidar, {FSWatcher} from 'chokidar';
 import fs from 'fs';
 import { configPath } from '../constants/paths';
 
@@ -15,7 +15,7 @@ const defaultConfig: Config = {
 let config: Config;
 
 // вот так будем обновлять содержимое
-export function reloadConfig() {
+function reloadConfig() {
   try {
     const raw = fs.readFileSync(configPath, 'utf-8');
     config = JSON.parse(raw);
@@ -27,13 +27,18 @@ export function reloadConfig() {
   }
 }
 
-// следим за изменениями файла
-const watcher = chokidar.watch(configPath, {
-  persistent: true,
-  ignoreInitial: true,
-});
+let watcher: FSWatcher;
 
-watcher.on('change', reloadConfig);
+export function setupConfig() {
+  watcher = chokidar.watch(configPath, {
+    persistent: true,
+    ignoreInitial: true,
+  });
+
+  watcher.on('change', reloadConfig);
+
+  reloadConfig();
+}
 
 export function getConfig(): Config {
   return config;

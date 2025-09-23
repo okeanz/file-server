@@ -1,4 +1,4 @@
-import { reloadConfig } from './utils/get-config';
+import { setupConfig } from './utils/get-config';
 import { achiveFolders } from './actions/achive-folders';
 import { registerApiRoutes } from './api';
 import { setupExpress } from './utils/setup-express';
@@ -7,7 +7,7 @@ import { setupExpress } from './utils/setup-express';
   try {
     const app = setupExpress();
 
-    reloadConfig();
+    setupConfig();
 
     await achiveFolders();
 
