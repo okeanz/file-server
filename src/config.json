@@ -1,0 +1,7 @@
+{
+  "foldersToArchive": [
+    "./mods1",
+    "./mods2"
+  ],
+  "archivesFolder": "./cache"
+}
