@@ -4,12 +4,14 @@ import { registerApiRoutes } from './api';
 import { setupExpress } from './utils/setup-express';
 import { Server } from 'node:http';
 import debounce from 'lodash.debounce';
+import cors from 'cors';
 
 let server: Server;
 
 const start = async () => {
   try {
     const app = setupExpress();
+    app.use(cors());
 
     setupConfig();
 
