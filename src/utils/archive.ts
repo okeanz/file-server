@@ -30,13 +30,19 @@ export async function makeArchive(srcDir: string, destDir: string): Promise<void
 
     // события потока записи
     output.on('close', () => {
-      const fileBuffer = fs.readFileSync(destFile);
-      const archiveChecksum = crypto.createHash('sha256').update(fileBuffer).digest('hex');
-      fs.writeFileSync(destFile + '.sha256', archiveChecksum, 'utf-8');
-      console.log(
-        `✅  Архивация завершена. Размер архива: ${(archive.pointer() / 1024 / 1024).toFixed(6)} MB`,
-      );
-      console.log(`sha256: ${archiveChecksum}`);
+		const hash = crypto.createHash('sha256');
+		const readStream = fs.createReadStream(destFile);
+		readStream.on('data', (chunk) => {
+			hash.update(chunk);
+		});
+		readStream.on('end', () => {
+			fs.writeFileSync(destFile + '.sha256', hash.digest('hex'), 'utf-8');
+	
+			console.log(
+				`✅  Архивация завершена. Размер архива: ${(archive.pointer() / 1024 / 1024).toFixed(6)} MB`,
+			  );
+			console.log(`sha256: ${hash.digest('hex')}`);
+		})
 
       resolve();
     });
