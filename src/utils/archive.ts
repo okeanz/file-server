@@ -27,21 +27,26 @@ export async function makeArchive(srcDir: string, destDir: string): Promise<void
 
     const output = fs.createWriteStream(destFile);
     const archive = archiver('zip', { zlib: { level: 9 } });
+	const privateKey = fs.readFileSync('./keys/private.key', 'utf-8');
 
     // события потока записи
     output.on('close', () => {
+		const signStream = crypto.createSign('SHA256');
 		const hash = crypto.createHash('sha256');
 		const readStream = fs.createReadStream(destFile);
+		
 		readStream.on('data', (chunk) => {
 			hash.update(chunk);
+			signStream.update(chunk);
 		});
 		readStream.on('end', () => {
 			fs.writeFileSync(destFile + '.sha256', hash.digest('hex'), 'utf-8');
+			fs.writeFileSync(destFile + '.sig', signStream.sign(privateKey, 'base64'), 'utf-8')
 	
 			console.log(
 				`✅  Архивация завершена. Размер архива: ${(archive.pointer() / 1024 / 1024).toFixed(6)} MB`,
 			  );
-			console.log(`sha256: ${hash.digest('hex')}`);
+			//console.log(`sha256: ${hash.digest('hex')}`); *fix Cannot be used second time
 		})
 
       resolve();

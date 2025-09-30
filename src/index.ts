@@ -5,6 +5,8 @@ import { setupExpress } from './utils/setup-express';
 import { Server } from 'node:http';
 import debounce from 'lodash.debounce';
 import cors from 'cors';
+import fs from 'fs';
+import { keygen } from './utils/generate-keypair';
 
 let server: Server;
 
@@ -14,6 +16,8 @@ const start = async () => {
     app.use(cors());
 
     setupConfig();
+
+	if (!fs.existsSync('./keys/private.key')) keygen();
 
     await achiveFolders();
 
