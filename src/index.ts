@@ -1,5 +1,5 @@
 import { configWatcher, setupConfig } from './utils/get-config';
-import { achiveFolders, clearArchiveWatchers } from './actions/achive-folders';
+import { archiveFolders, clearArchiveWatchers } from './actions/achive-folders';
 import { registerApiRoutes } from './api';
 import { setupExpress } from './utils/setup-express';
 import { Server } from 'node:http';
@@ -15,7 +15,7 @@ const start = async () => {
 
     setupConfig();
 
-    await achiveFolders();
+    await archiveFolders();
 
     registerApiRoutes(app);
 

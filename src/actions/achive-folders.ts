@@ -17,7 +17,7 @@ export function clearArchiveWatchers() {
   archiveWatchers.length = 0; // очищаем массив "на месте"
 }
 
-export const achiveFolders = async () => {
+export const archiveFolders = async () => {
   const { foldersToArchive, archivesFolder, watcherThrottle } = getConfig();
   if (!foldersToArchive || !foldersToArchive.length) {
     console.log('[archiveMods] foldersToArchive is empty');
