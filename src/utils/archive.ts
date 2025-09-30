@@ -41,7 +41,7 @@ export async function makeArchive(srcDir: string, destDir: string): Promise<void
 			console.log(
 				`✅  Архивация завершена. Размер архива: ${(archive.pointer() / 1024 / 1024).toFixed(6)} MB`,
 			  );
-			console.log(`sha256: ${hash.digest('hex')}`);
+			//console.log(`sha256: ${hash.digest('hex')}`); *fix Cannot be used second time
 		})
 
       resolve();
