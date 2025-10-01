@@ -31,4 +31,22 @@ export const serveArchives = (app: Express) => {
       res.status(500).send('Unexpected error');
     }
   });
+  app.get('/fileSignature/:file', async (req, res) => {
+    try {
+      const relPath = req.params.file; // относительный путь к файлу
+      const filePath = path.join(__dirname, archivesFolder, relPath);
+      const sigFile = filePath + '.sig';
+
+      //Проверяем, существует ли подпись
+      if (!fs.existsSync(sigFile) || !fs.statSync(sigFile).isFile()) {
+        return res.status(404).send('File not found');
+      }
+
+      const signature = fs.readFileSync(sigFile, 'utf-8').trim();
+      res.type('text/plain').send(signature);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Unexpected error');
+    }
+  });
 };
