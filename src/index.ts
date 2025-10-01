@@ -1,10 +1,12 @@
 import { configWatcher, setupConfig } from './utils/get-config';
-import { achiveFolders, clearArchiveWatchers } from './actions/achive-folders';
+import { archiveFolders, clearArchiveWatchers } from './actions/achive-folders';
 import { registerApiRoutes } from './api';
 import { setupExpress } from './utils/setup-express';
 import { Server } from 'node:http';
 import debounce from 'lodash.debounce';
 import cors from 'cors';
+import fs from 'fs';
+import { keygen } from './utils/generate-keypair';
 
 let server: Server;
 
@@ -15,7 +17,9 @@ const start = async () => {
 
     setupConfig();
 
-    await achiveFolders();
+	if (!fs.existsSync('./keys/private.key')) keygen();
+
+    await archiveFolders();
 
     registerApiRoutes(app);
 

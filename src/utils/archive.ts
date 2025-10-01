@@ -27,16 +27,31 @@ export async function makeArchive(srcDir: string, destDir: string): Promise<void
 
     const output = fs.createWriteStream(destFile);
     const archive = archiver('zip', { zlib: { level: 9 } });
+    const privateKey = fs.readFileSync('./keys/private.key', 'utf-8');
 
     // события потока записи
     output.on('close', () => {
-      const fileBuffer = fs.readFileSync(destFile);
-      const archiveChecksum = crypto.createHash('sha256').update(fileBuffer).digest('hex');
-      fs.writeFileSync(destFile + '.sha256', archiveChecksum, 'utf-8');
-      console.log(
-        `✅  Архивация завершена. Размер архива: ${(archive.pointer() / 1024 / 1024).toFixed(6)} MB`,
-      );
-      console.log(`sha256: ${archiveChecksum}`);
+      const signStream = crypto.createSign('SHA256');
+      const hash = crypto.createHash('sha256');
+      const readStream = fs.createReadStream(destFile);
+
+      readStream.on('data', (chunk) => {
+        hash.update(chunk);
+        signStream.update(chunk);
+      });
+      readStream.on('end', () => {
+        const hashSum = hash.digest('hex');
+        const sigB64 = signStream.sign(privateKey, 'base64');
+
+        fs.writeFileSync(destFile + '.sha256', hashSum, 'utf-8');
+        fs.writeFileSync(destFile + '.sig', sigB64, 'utf-8');
+
+        console.log(
+          `✅  Архивация завершена. Размер архива: ${(archive.pointer() / 1024 / 1024).toFixed(6)} MB`,
+        );
+        console.log(`💳  sha256 of ${destFile}: ${hashSum}`);
+        console.log(`✍️  Signature of ${destFile}: ${sigB64}`);
+      });
 
       resolve();
     });
